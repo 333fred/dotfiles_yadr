@@ -67,6 +67,7 @@ alias ve='vim ~/.vimrc'
 
 # zsh profile editing
 alias ze='vim ~/.zshrc'
+alias zr='source ~/.zshrc'
 
 # Git Aliases
 alias gs='git status'
@@ -186,7 +187,6 @@ alias srgm='spring rails g migration'
 alias srdm='spring rake db:migrate'
 alias srdt='spring rake db:migrate'
 alias srdmt='spring rake db:migrate db:test:prepare'
-
 
 # Sprintly - https://github.com/nextbigsoundinc/Sprintly-GitHub
 alias sp='sprintly'
