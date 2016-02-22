@@ -103,7 +103,7 @@ task :install_vundle do
   vundle_path = File.join('vim','bundle', 'vundle')
   unless File.exists?(vundle_path)
     run %{
-      cd $HOME/.yadr
+      cd $HOME/.vim
       git clone https://github.com/gmarik/vundle.git #{vundle_path}
     }
   end
@@ -271,7 +271,7 @@ def install_prezto
   puts
   puts "Creating directories for your customizations"
   run %{ mkdir -p $HOME/.zsh.before }
-  run %{ mkdir -p $HOME/.zsh.after }
+  run %{ cp -r $HOME/.yadr/zsh/zsh.after $HOME/.zsh.after }
   run %{ mkdir -p $HOME/.zsh.prompts }
 
   if ENV["SHELL"].include? 'zsh' then
