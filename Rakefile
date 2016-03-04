@@ -10,16 +10,13 @@ task :install => [:submodule_init, :submodules] do
   puts "======================================================"
   puts
 
-  install_homebrew if RUBY_PLATFORM.downcase.include?("darwin")
-  install_rvm_binstubs
-
   # this has all the runcoms from this directory.
   install_files(Dir.glob('git/*')) if want_to_install?('git configs (color, aliases)')
-  install_files(Dir.glob('irb/*')) if want_to_install?('irb/pry configs (more colorful)')
-  install_files(Dir.glob('ruby/*')) if want_to_install?('rubygems config (faster/no docs)')
   install_files(Dir.glob('ctags/*')) if want_to_install?('ctags config (better js/ruby support)')
   install_files(Dir.glob('tmux/*')) if want_to_install?('tmux config')
   install_files(Dir.glob('vimify/*')) if want_to_install?('vimification of command line tools')
+  link_file('i3', "#{ENV["HOME"]}/.config/i3") if want_to_install?('i3 config')
+  link_file('i3status', "#{ENV["HOME"]}/.config/i3status") if want_to_install?('i3 config')
   if want_to_install?('vim configuration (highly recommended)')
     install_files(Dir.glob('{vim,vimrc}'))
     Rake::Task["install_vundle"].execute
@@ -28,8 +25,6 @@ task :install => [:submodule_init, :submodules] do
   Rake::Task["install_prezto"].execute
 
   install_fonts
-
-  install_term_theme if RUBY_PLATFORM.downcase.include?("darwin")
 
   run_bundle_config
 
@@ -151,33 +146,6 @@ def install_rvm_binstubs
   puts
 end
 
-def install_homebrew
-  run %{which brew}
-  unless $?.success?
-    puts "======================================================"
-    puts "Installing Homebrew, the OSX package manager...If it's"
-    puts "already installed, this will do nothing."
-    puts "======================================================"
-    run %{ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"}
-  end
-
-  puts
-  puts
-  puts "======================================================"
-  puts "Updating Homebrew."
-  puts "======================================================"
-  run %{brew update}
-  puts
-  puts
-  puts "======================================================"
-  puts "Installing Homebrew packages...There may be some warnings."
-  puts "======================================================"
-  run %{brew install zsh ctags git hub tmux reattach-to-user-namespace the_silver_searcher}
-  run %{brew install macvim --custom-icons --override-system-vim --with-lua --with-luajit}
-  puts
-  puts
-end
-
 def install_fonts
   puts "======================================================"
   puts "Installing patched fonts for Powerline/Lightline."
@@ -185,59 +153,6 @@ def install_fonts
   run %{ cp -f $HOME/.yadr/fonts/* $HOME/Library/Fonts } if RUBY_PLATFORM.downcase.include?("darwin")
   run %{ mkdir -p ~/.fonts && cp ~/.yadr/fonts/* ~/.fonts && fc-cache -vf ~/.fonts } if RUBY_PLATFORM.downcase.include?("linux")
   puts
-end
-
-def install_term_theme
-  puts "======================================================"
-  puts "Installing iTerm2 solarized theme."
-  puts "======================================================"
-  run %{ /usr/libexec/PlistBuddy -c "Add :'Custom Color Presets':'Solarized Light' dict" ~/Library/Preferences/com.googlecode.iterm2.plist }
-  run %{ /usr/libexec/PlistBuddy -c "Merge 'iTerm2/Solarized Light.itermcolors' :'Custom Color Presets':'Solarized Light'" ~/Library/Preferences/com.googlecode.iterm2.plist }
-  run %{ /usr/libexec/PlistBuddy -c "Add :'Custom Color Presets':'Solarized Dark' dict" ~/Library/Preferences/com.googlecode.iterm2.plist }
-  run %{ /usr/libexec/PlistBuddy -c "Merge 'iTerm2/Solarized Dark.itermcolors' :'Custom Color Presets':'Solarized Dark'" ~/Library/Preferences/com.googlecode.iterm2.plist }
-
-  # If iTerm2 is not installed or has never run, we can't autoinstall the profile since the plist is not there
-  if !File.exists?(File.join(ENV['HOME'], '/Library/Preferences/com.googlecode.iterm2.plist'))
-    puts "======================================================"
-    puts "To make sure your profile is using the solarized theme"
-    puts "Please check your settings under:"
-    puts "Preferences> Profiles> [your profile]> Colors> Load Preset.."
-    puts "======================================================"
-    return
-  end
-
-  # Ask the user which theme he wants to install
-  message = "Which theme would you like to apply to your iTerm2 profile?"
-  color_scheme = ask message, iTerm_available_themes
-
-  return if color_scheme == 'None'
-
-  color_scheme_file = File.join('iTerm2', "#{color_scheme}.itermcolors")
-
-  # Ask the user on which profile he wants to install the theme
-  profiles = iTerm_profile_list
-  message = "I've found #{profiles.size} #{profiles.size>1 ? 'profiles': 'profile'} on your iTerm2 configuration, which one would you like to apply the Solarized theme to?"
-  profiles << 'All'
-  selected = ask message, profiles
-
-  if selected == 'All'
-    (profiles.size-1).times { |idx| apply_theme_to_iterm_profile_idx idx, color_scheme_file }
-  else
-    apply_theme_to_iterm_profile_idx profiles.index(selected), color_scheme_file
-  end
-end
-
-def iTerm_available_themes
-   Dir['iTerm2/*.itermcolors'].map { |value| File.basename(value, '.itermcolors')} << 'None'
-end
-
-def iTerm_profile_list
-  profiles=Array.new
-  begin
-    profiles <<  %x{ /usr/libexec/PlistBuddy -c "Print :'New Bookmarks':#{profiles.size}:Name" ~/Library/Preferences/com.googlecode.iterm2.plist 2>/dev/null}
-  end while $?.exitstatus==0
-  profiles.pop
-  profiles
 end
 
 def ask(message, values)
@@ -305,6 +220,11 @@ def install_files(files, method = :symlink)
     source = "#{ENV["PWD"]}/#{f}"
     target = "#{ENV["HOME"]}/.#{file}"
 
+    link_file(source, target, method)
+  end
+end
+
+def link_file(source, target, method)
     puts "======================#{file}=============================="
     puts "Source: #{source}"
     puts "Target: #{target}"
@@ -331,7 +251,6 @@ def install_files(files, method = :symlink)
 
     puts "=========================================================="
     puts
-  end
 end
 
 def needs_migration_to_vundle?

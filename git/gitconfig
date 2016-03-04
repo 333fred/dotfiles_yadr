@@ -128,3 +128,5 @@
 [user]
 	name = Fredric Silberberg
 	email = fredric@fsilberberg.com
+[gitreview]
+	username = fsilberberg
