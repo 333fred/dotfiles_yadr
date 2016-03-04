@@ -25,6 +25,7 @@
 
   # branch
   b = branch -v                     # branch (verbose)
+  bd = branch -d                    # branch (delete)
 
   # commit
   c = commit -m                     # commit with message
