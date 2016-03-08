@@ -15,6 +15,7 @@ task :install => [:submodule_init, :submodules] do
   install_files(Dir.glob('ctags/*')) if want_to_install?('ctags config (better js/ruby support)')
   install_files(Dir.glob('tmux/*')) if want_to_install?('tmux config')
   install_files(Dir.glob('vimify/*')) if want_to_install?('vimification of command line tools')
+  install_files(Dir.glob('python/*')) if want_to_install?('python config')
   link_file('i3', "#{ENV["HOME"]}/.config/i3") if want_to_install?('i3 config')
   link_file('i3status', "#{ENV["HOME"]}/.config/i3status") if want_to_install?('i3 config')
   if want_to_install?('vim configuration (highly recommended)')
