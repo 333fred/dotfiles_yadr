@@ -25,6 +25,7 @@
 
   # branch
   b = branch -v                     # branch (verbose)
+  bd = branch -d                    # branch (delete)
 
   # commit
   c = commit -m                     # commit with message
@@ -128,3 +129,5 @@
 [user]
 	name = Fredric Silberberg
 	email = fredric@fsilberberg.com
+[gitreview]
+	username = fsilberberg
