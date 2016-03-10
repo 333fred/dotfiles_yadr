@@ -21,3 +21,10 @@ endfunction
 if !exists("g:syntastic_ruby_exec")
     let g:syntastic_ruby_exec = s:FindRubyExec()
 endif
+
+" Set up a custom mode for racket, so syntastic checks it
+if has("autocmd")
+  au BufReadPost *.rkt,*.rktl set filetype=racket
+  au filetype racket set lisp
+  au filetype racket set autoindent
+endif
