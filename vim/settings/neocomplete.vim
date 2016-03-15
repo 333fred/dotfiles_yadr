@@ -16,7 +16,6 @@ let g:neocomplete#auto_completion_start_length = 3
 inoremap <C-Space> <C-n>
 inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
 
-
 " This makes sure we use neocomplete completefunc instead of
 " the one in rails.vim, otherwise this plugin will crap out.
 let g:neocomplete#force_overwrite_completefunc = 1

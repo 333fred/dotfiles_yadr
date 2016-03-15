@@ -7,3 +7,5 @@ Bundle "chriskempson/base16-vim"
 
 " Required for Gblame in terminal vim
 Bundle "godlygeek/csapprox.git"
+
+Bundle "kien/rainbow_parentheses.vim.git"
