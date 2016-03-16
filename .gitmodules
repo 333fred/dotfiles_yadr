@@ -3,5 +3,5 @@
 	url = https://github.com/sorin-ionescu/prezto.git
   ignore = dirty
 [submodule "spacemacs"]
-	path = spacemacs
+	path = emacs/.emacs.d
 	url = https://github.com/syl20bnr/spacemacs

@@ -16,7 +16,7 @@ task :install => [:submodule_init, :submodules] do
   install_files(Dir.glob('tmux/*')) if want_to_install?('tmux config')
   install_files(Dir.glob('vimify/*')) if want_to_install?('vimification of command line tools')
   install_files(Dir.glob('python/*')) if want_to_install?('python config')
-  install_files(Dir.glob('spacemacs/*')) if want_to_install?('emacs config')
+  link_file('spacemacs', "#{ENV["HOME"]}/.emacs.d/") if want_to_install?('emacs config')
   link_file('spacemacs_config', "#{ENV["HOME"]}/.spacemacs") if want_to_install?('emacs config')
   link_file('i3', "#{ENV["HOME"]}/.config/i3") if want_to_install?('i3 config')
   link_file('i3status', "#{ENV["HOME"]}/.config/i3status") if want_to_install?('i3 config')
