@@ -14,3 +14,6 @@ vim/.vim/sessions
 .netrwhist
 bin/subl
 tags
+.idea/
+*.iml
+.gradle/
